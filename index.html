@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NIC TACTICAL OPS • INDEX v0.9</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,53 +16,45 @@
         .scanline {
             position: relative;
         }
-        
         .scanline::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                transparent 50%,
-                rgba(0, 255, 70, 0.03) 50%
-            );
-            background-size: 100% 4px;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 255, 70, 0.08) 50%);
+            background-size: 100% 6px;
             pointer-events: none;
-            animation: scan 4s linear infinite;
-            z-index: 10;
+            animation: scan 6s linear infinite;
+            z-index: 5;
         }
         
         @keyframes scan {
             0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
+            100% { transform: translateY(400%); }
         }
         
         .terminal {
             background: #0a0a0a;
-            border: 2px solid #00ff46;
-            box-shadow: 0 0 20px #00ff46;
+            border: 3px solid #00ff46;
+            box-shadow: 0 0 30px rgba(0, 255, 70, 0.6);
         }
         
-        .glitch {
-            animation: glitch 0.5s infinite;
+        .log-line {
+            line-height: 1.45;
+            font-size: 1.1rem;
         }
         
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+        @media (max-width: 1024px) {
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body class="bg-black text-green-400 min-h-screen overflow-hidden">
+
     <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="flex items-center justify-center min-h-screen scanline">
+    <div id="login-screen" class="flex items-center justify-center min-h-screen scanline p-4">
         <div class="terminal p-8 w-full max-w-md rounded-lg">
             <div class="flex justify-center mb-6">
                 <div class="text-center">
@@ -75,22 +67,18 @@
             <div class="space-y-6">
                 <div>
                     <label class="block text-sm mb-1">USERNAME</label>
-                    <input id="username" 
-                           type="text" 
-                           value="admin"
-                           class="w-full bg-black border border-green-500 p-3 text-green-400 focus:outline-none focus:border-green-300">
+                    <input id="username" type="text" value="admin"
+                           class="w-full bg-black border-2 border-green-500 p-4 text-green-400 focus:outline-none focus:border-green-300 text-lg">
                 </div>
                 
                 <div>
                     <label class="block text-sm mb-1">PASSWORD</label>
-                    <input id="password" 
-                           type="password" 
-                           placeholder="••••••••"
-                           class="w-full bg-black border border-green-500 p-3 text-green-400 focus:outline-none focus:border-green-300">
+                    <input id="password" type="password" placeholder="••••••••"
+                           class="w-full bg-black border-2 border-green-500 p-4 text-green-400 focus:outline-none focus:border-green-300 text-lg">
                 </div>
                 
                 <button onclick="attemptLogin()" 
-                        class="w-full bg-green-600 hover:bg-green-500 transition-colors py-4 text-black font-bold text-xl tracking-widest">
+                        class="w-full bg-green-600 hover:bg-green-500 transition-colors py-5 text-black font-bold text-xl tracking-widest">
                     AUTHENTICATE
                 </button>
                 
@@ -99,7 +87,7 @@
                 </div>
             </div>
             
-            <div class="mt-8 text-center text-[10px] text-green-700">
+            <div class="mt-8 text-center text-xs text-green-700">
                 SECURE NODE • NEW YORK • 19 JUL 2026
             </div>
         </div>
@@ -110,127 +98,111 @@
         <!-- HEADER -->
         <header class="border-b border-green-500 bg-black p-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-skull text-2xl"></i>
+                <i class="fa-solid fa-skull text-3xl"></i>
                 <div>
-                    <h1 class="text-xl tracking-widest">TACTICAL OPS PORTAL</h1>
+                    <h1 class="text-2xl tracking-widest">TACTICAL OPS PORTAL</h1>
                     <p class="text-xs text-green-600">ADMIN • LEVEL 9 CLEARANCE</p>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-6 text-sm">
-                <div onclick="logout()" class="cursor-pointer hover:text-white flex items-center gap-2">
+            <div class="text-right text-sm">
+                <div>19 JUL 2026 • 09:00 ET</div>
+                <div onclick="logout()" class="cursor-pointer hover:text-white inline-flex items-center gap-2 mt-1">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>LOGOUT</span>
-                </div>
-                <div class="text-green-600 text-xs">
-                    19 JUL 2026 • 09:00 ET
                 </div>
             </div>
         </header>
 
-        <div class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- LEFT PANEL: STATUS -->
-            <div class="lg:col-span-1 space-y-6">
-                <div class="terminal p-6">
-                    <h2 class="text-lg mb-4 border-b border-green-500 pb-2">SYSTEM STATUS</h2>
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between">
-                            <span>ENDPOINT CONNECTIVITY</span>
-                            <span class="text-green-400">● LIVE</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>PROXY CHAIN</span>
-                            <span class="text-green-400">7 HOPS • TOR+VPN</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>ZERO-DAY SCANNER</span>
-                            <span id="scanner-status" class="text-yellow-400">IDLE</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="terminal p-6">
-                    <h2 class="text-lg mb-4 border-b border-green-500 pb-2">ACTIVE NODES</h2>
-                    <div id="active-nodes" class="space-y-2 text-sm">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- CENTER: MAIN OPS -->
-            <div class="lg:col-span-1">
-                <div class="terminal h-full p-6 flex flex-col">
-                    <h2 class="text-lg mb-6 border-b border-green-500 pb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-satellite-dish"></i>
-                        DATA EXTRACTION CONSOLE
-                    </h2>
-                    
-                    <button onclick="startExtraction()" 
-                            id="extract-btn"
-                            class="bg-red-600 hover:bg-red-500 w-full py-6 text-xl font-bold tracking-widest transition-all active:scale-95">
-                        REQUEST ZERO-DAY EXTRACTION
-                    </button>
-                    
-                    <div id="simulation-log" class="flex-1 mt-8 font-mono text-xs overflow-y-auto space-y-1 max-h-96">
-                        <!-- Logs populated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT PANEL: RESULTS -->
-            <div class="lg:col-span-1">
-                <div id="results-panel" class="terminal h-full p-6 hidden flex-col">
-                    <h2 class="text-lg mb-6 border-b border-green-500 pb-2 flex items-center gap-2 text-yellow-400">
-                        <i class="fa-solid fa-bug"></i>
-                        EXTRACTION RESULTS
-                    </h2>
-                    
-                    <div class="space-y-6 text-sm flex-1">
-                        <div>
-                            <div class="text-green-400">ZERO DAY CONFIRMED</div>
-                            <div class="text-xl text-white">09:00 NEW YORK</div>
-                        </div>
-                        
-                        <div class="border-l-2 border-green-500 pl-4">
-                            <div class="text-amber-400">CONFIG • XAUUSD</div>
-                            <div class="text-white">DUMP TO NEXT ET LEVEL</div>
-                        </div>
-                        
-                        <div>
-                            <div class="flex justify-between items-center">
-                                <span>BTC USE</span>
-                                <span class="text-red-400">NO ZERO DAY CONFIRMED</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span>NASDAQ</span>
-                                <span class="text-red-400">NO ZERO DAY CONFIRMED</span>
-                            </div>
-                        </div>
-                        
-                        <div class="pt-4 border-t border-green-500">
-                            <div class="text-green-400 mb-1">ACTIVE ZERO DAY</div>
-                            <div class="text-2xl font-bold text-white">01</div>
-                        </div>
-                        
-                        <div>
-                            <div class="text-green-400 mb-1">DATA POINT</div>
-                            <div class="bg-black p-4 text-green-500 text-xs leading-relaxed border border-green-900">
-                                Leave this empty we will update it soon
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button onclick="resetDashboard()" 
-                            class="mt-8 w-full py-3 border border-green-500 hover:bg-green-950 transition-colors">
-                        RUN NEW EXTRACTION
-                    </button>
-                </div>
+        <div class="flex-1 p-4 lg:p-6 overflow-auto">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- Placeholder before results -->
-                <div id="results-placeholder" class="terminal h-full p-6 flex items-center justify-center text-center text-green-700">
-                    <div>
-                        <i class="fa-solid fa-lock text-5xl mb-4"></i>
-                        <p class="text-sm">EXTRACTION RESULTS WILL APPEAR HERE</p>
+                <!-- LEFT PANEL -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="terminal p-6">
+                        <h2 class="text-xl mb-4 border-b border-green-500 pb-2">SYSTEM STATUS</h2>
+                        <div class="space-y-4 text-lg">
+                            <div class="flex justify-between"><span>ENDPOINT CONNECTIVITY</span><span class="text-green-400">● LIVE</span></div>
+                            <div class="flex justify-between"><span>PROXY CHAIN</span><span class="text-green-400">7 HOPS • TOR+VPN</span></div>
+                            <div class="flex justify-between"><span>ZERO-DAY SCANNER</span><span id="scanner-status" class="text-yellow-400">IDLE</span></div>
+                        </div>
+                    </div>
+
+                    <div class="terminal p-6">
+                        <h2 class="text-xl mb-4 border-b border-green-500 pb-2">ACTIVE NODES</h2>
+                        <div id="active-nodes" class="space-y-3 text-lg"></div>
+                    </div>
+                </div>
+
+                <!-- CENTER: EXTRACTION -->
+                <div class="lg:col-span-1">
+                    <div class="terminal h-full p-6 flex flex-col">
+                        <h2 class="text-xl mb-6 border-b border-green-500 pb-2 flex items-center gap-3">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                            DATA EXTRACTION CONSOLE
+                        </h2>
+                        
+                        <button onclick="startExtraction()" id="extract-btn"
+                                class="bg-red-600 hover:bg-red-500 w-full py-7 text-2xl font-bold tracking-widest transition-all active:scale-95">
+                            REQUEST ZERO-DAY EXTRACTION
+                        </button>
+                        
+                        <div id="simulation-log" class="flex-1 mt-8 overflow-y-auto space-y-2 text-lg max-h-[420px]"></div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: RESULTS -->
+                <div class="lg:col-span-1">
+                    <div id="results-panel" class="terminal h-full p-6 hidden flex-col">
+                        <div class="bg-red-600 text-center py-5 text-3xl font-bold tracking-widest mb-8">
+                            EXTRACTION COMPLETE
+                        </div>
+                        
+                        <div class="space-y-8 flex-1 text-lg">
+                            <div>
+                                <div class="text-green-400">ZERO DAY CONFIRMED</div>
+                                <div class="text-4xl text-white">09:00 NEW YORK</div>
+                            </div>
+                            
+                            <div class="border-l-4 border-green-500 pl-6">
+                                <div class="text-amber-400 text-xl">CONFIG • XAUUSD</div>
+                                <div class="text-white text-2xl">DUMP TO NEXT ET LEVEL</div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span>BTC USE</span>
+                                    <span class="text-red-400">NO ZERO DAY CONFIRMED</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>NASDAQ</span>
+                                    <span class="text-red-400">NO ZERO DAY CONFIRMED</span>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-6 border-t border-green-500">
+                                <div class="text-green-400">ACTIVE ZERO DAY</div>
+                                <div class="text-5xl font-bold text-white">01</div>
+                            </div>
+                            
+                            <div>
+                                <div class="text-green-400 mb-2">DATA POINT</div>
+                                <div class="bg-black p-6 border border-green-900 text-green-300">
+                                    Leave this empty we will update it soon
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="resetDashboard()" 
+                                class="mt-10 w-full py-4 border-2 border-green-500 hover:bg-green-950 transition-colors text-lg">
+                            RUN NEW EXTRACTION
+                        </button>
+                    </div>
+                    
+                    <div id="results-placeholder" class="terminal h-full p-6 flex items-center justify-center text-center text-green-700">
+                        <div>
+                            <i class="fa-solid fa-lock text-6xl mb-6"></i>
+                            <p class="text-xl">EXTRACTION RESULTS WILL APPEAR HERE</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -238,8 +210,6 @@
     </div>
 
     <script>
-        // Tailwind script already included via CDN
-        
         function attemptLogin() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
@@ -256,37 +226,27 @@
         }
         
         function initDashboard() {
-            // Populate active nodes
             const nodesHTML = `
-                <div class="flex justify-between text-green-400">
-                    <span>NYC-01</span><span class="text-green-400">● ONLINE</span>
-                </div>
-                <div class="flex justify-between text-green-400">
-                    <span>LON-07</span><span class="text-green-400">● ONLINE</span>
-                </div>
-                <div class="flex justify-between text-green-400">
-                    <span>SG-14</span><span class="text-green-400">● ONLINE</span>
-                </div>
+                <div class="flex justify-between"><span>NYC-01</span><span class="text-green-400">● ONLINE</span></div>
+                <div class="flex justify-between"><span>LON-07</span><span class="text-green-400">● ONLINE</span></div>
+                <div class="flex justify-between"><span>SG-14</span><span class="text-green-400">● ONLINE</span></div>
             `;
             document.getElementById('active-nodes').innerHTML = nodesHTML;
         }
         
-        let logInterval = null;
-        
         function addLog(message, type = 'normal') {
-            const logContainer = document.getElementById('simulation-log');
-            const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const container = document.getElementById('simulation-log');
+            const timestamp = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             
-            let colorClass = 'text-green-400';
-            if (type === 'warning') colorClass = 'text-yellow-400';
-            if (type === 'error') colorClass = 'text-red-400';
-            if (type === 'success') colorClass = 'text-emerald-400';
+            let color = 'text-green-400';
+            if (type === 'warning') color = 'text-yellow-400';
+            if (type === 'success') color = 'text-emerald-400';
             
-            const logEntry = document.createElement('div');
-            logEntry.className = `flex ${colorClass}`;
-            logEntry.innerHTML = `<span class="w-20 text-green-700">[${timestamp}]</span><span>${message}</span>`;
-            logContainer.appendChild(logEntry);
-            logContainer.scrollTop = logContainer.scrollHeight;
+            const entry = document.createElement('div');
+            entry.className = `log-line flex ${color}`;
+            entry.innerHTML = `<span class="w-28 shrink-0 text-green-700">[${timestamp}]</span><span>${message}</span>`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
         }
         
         function startExtraction() {
@@ -299,37 +259,29 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> RUNNING EXPLOIT CHAIN...`;
             logContainer.innerHTML = '';
             
-            addLog("INITIALIZING PROXY TUNNEL...", "normal");
+            const steps = [
+                ["INITIALIZING PROXY TUNNEL...", "normal"],
+                ["ESTABLISHING COVERT CHANNEL", "normal"],
+                ["SCANNING FOR ZERO-DAY VECTORS", "warning"],
+                ["ZERO-DAY EXPLOIT DETECTED IN XAUUSD ENDPOINT", "success"],
+                ["SENDING PAYLOAD TO REMOTE NODE", "normal"],
+                ["DATA EXFIL COMPLETE • 14.8KB", "success"],
+                ["TERMINATING SESSION TRACES", "normal"]
+            ];
             
-            setTimeout(() => {
-                addLog("ESTABLISHING COVERT CHANNEL", "normal");
-            }, 600);
-            
-            setTimeout(() => {
-                addLog("SCANNING FOR ZERO-DAY VECTORS", "warning");
-            }, 1300);
-            
-            setTimeout(() => {
-                addLog("ZERO-DAY EXPLOIT DETECTED IN XAUUSD ENDPOINT", "success");
-            }, 2200);
-            
-            setTimeout(() => {
-                addLog("SENDING PAYLOAD TO REMOTE NODE", "normal");
-            }, 3100);
-            
-            setTimeout(() => {
-                addLog("DATA EXFIL COMPLETE • 14.8KB", "success");
-            }, 4200);
-            
-            setTimeout(() => {
-                addLog("TERMINATING SESSION TRACES", "normal");
-                btn.innerHTML = `EXTRACTION COMPLETE`;
-                
-                // Show results
-                placeholder.classList.add('hidden');
-                resultsPanel.classList.remove('hidden');
-                resultsPanel.classList.add('flex');
-            }, 5200);
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < steps.length) {
+                    addLog(steps[i][0], steps[i][1]);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    btn.textContent = "EXTRACTION COMPLETE";
+                    placeholder.classList.add('hidden');
+                    resultsPanel.classList.remove('hidden');
+                    resultsPanel.classList.add('flex');
+                }
+            }, 650);
         }
         
         function resetDashboard() {
@@ -346,23 +298,11 @@
         }
         
         function logout() {
-            if (confirm("Terminate session and return to login?")) {
-                location.reload();
-            }
+            if (confirm("Terminate session?")) location.reload();
         }
         
-        // Keyboard support for login
-        document.getElementById('password').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                attemptLogin();
-            }
-        });
-        
-        // Prevent right-click context menu for tactical feel
-        document.addEventListener('contextmenu', function(e) {
-            if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
-                e.preventDefault();
-            }
+        document.getElementById('password').addEventListener('keypress', e => {
+            if (e.key === 'Enter') attemptLogin();
         });
     </script>
 </body>
